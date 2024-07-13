@@ -6,16 +6,19 @@ const mongoose = require('mongoose');
 const connectDB = require('./db');
 const Dish = require('./dishModel');
 
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*', // Adjusted to allow all origins for the socket connection
+    origin: 'http://localhost:5173',
     methods: ['GET', 'POST']
   }
 });
 
-app.use(cors()); // Adjusted to allow all origins for the API requests
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
 app.use(express.json());
 
 connectDB();
@@ -38,6 +41,7 @@ app.post('/api/dishes/toggle', async (req, res) => {
   }
 });
 
+
 // Change Stream setup
 const db = mongoose.connection;
 db.once('open', () => {
@@ -52,6 +56,10 @@ db.once('open', () => {
       });
     }
   });
+});
+
+app.get('/', (req, res) => {
+  res.send('Welcome to the Dish Management API');
 });
 
 const PORT = process.env.PORT || 5000;
